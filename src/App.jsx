@@ -6,8 +6,8 @@ const THEME_KEY = 'linkinbio_theme'
 const defaultConfig = {
   profile: {
     name: 'Muhammad Alfata',
-    handle: 'IELTS & EdTech',
-    bio: 'Building IELTS tools • EdTech designer',
+    handle: 'Instructional Designer | eLearning Developer |',
+    bio: 'providing educational advice and collaborating with stakeholders to develop high-quality learning solutions. Focused on enhancing student academic success through digital learning',
     avatarUrl: 'https://drive.google.com/file/d/1raKi7JJTogzpRI0Zz1-7LMdpUxtXhkMd/view',
     accent: 'from-indigo-500 via-sky-500 to-emerald-400',
     socials: [
