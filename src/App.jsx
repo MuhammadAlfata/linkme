@@ -3,19 +3,19 @@ import { Globe, Instagram, Github, Mail, Link as LinkIcon } from 'lucide-react'
 
 const THEME_KEY = 'linkinbio_theme'
 
-const defaultConfig = {
-  profile: {
-    name: 'Muhammad Alfata',
-    handle: 'Instructional Designer | eLearning Developer |',
-    bio: 'providing educational advice and collaborating with stakeholders to develop high-quality learning solutions. Focused on enhancing student academic success through digital learning',
-    avatarUrl: 'https://drive.google.com/file/d/1raKi7JJTogzpRI0Zz1-7LMdpUxtXhkMd/view',
-    accent: 'from-indigo-500 via-sky-500 to-emerald-400',
-    socials: [
-      { type: 'website', label: 'Website', url: 'https://example.com' },
-      { type: 'instagram', label: 'Instagram', url: 'https://instagram.com/muhata_' },
-      { type: 'Linkedin', label: 'Linkedin',url: 'https://www.linkedin.com/in/muhammad-alfata-8322561a4/'}
-    ],
-  },
+  const defaultConfig = {
+    profile: {
+      name: 'Muhammad Alfata',
+      handle: 'Instructional Designer | eLearning Developer |',
+      bio: 'providing educational advice and collaborating with stakeholders to develop high-quality learning solutions. Focused on enhancing student academic success through digital learning',
+      avatarUrl: 'https://drive.google.com/file/d/1raKi7JJTogzpRI0Zz1-7LMdpUxtXhkMd/view',
+      accent: 'from-indigo-500 via-sky-500 to-emerald-400',
+      socials: [
+        { type: 'website', label: 'Website', url: 'https://example.com' },
+        { type: 'instagram', label: 'Instagram', url: 'https://instagram.com/muhata_' },
+      { type: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/muhammad-alfata-8322561a4/'}
+      ],
+    },
   links: [
     { id: '1', title: 'Random IELTS Speaking Question Generator', url: 'https://speakinggenerator.vercel.app/', emoji: '🎤', badge: 'Free' },
     { id: '2', title: 'IELTS Mastery Hub (Coming Soon)', url: 'https://waitlist.example', emoji: '🚀', badge: 'Beta' },
@@ -100,7 +100,7 @@ export default function App() {
 
   return (
     <div className={`min-h-screen ${gradient} text-gray-900 dark:text-gray-100 transition-colors`}>
-      <div className="backdrop-blur-sm bg-white/40 dark:bg-black/30 min-h-screen">
+      <div className="min-h-screen">
         <main className={`mx-auto max-w-xl px-4 sm:px-6 py-8 transition-all duration-500 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
           <div className={`h-2 mb-4 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`} style={{ transitionDelay: '60ms' }} />
 
@@ -115,9 +115,38 @@ export default function App() {
           </section>
 
           {/* Socials */}
-          <div className={`flex flex-wrap justify-center gap-2 mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`} style={{ transitionDelay: '140ms' }}>
+          <div className={`flex flex-wrap justify-center gap-3 mb-8 transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`} style={{ transitionDelay: '140ms' }}>
             {config.profile.socials?.map((s, idx) => (
-              <a key={idx} href={s.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost" aria-label={s.label}>
+              <a
+                key={idx}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-chip chip-tilt"
+                aria-label={s.label}
+                onMouseMove={(e) => {
+                  const el = e.currentTarget
+                  const r = el.getBoundingClientRect()
+                  const x = (e.clientX - r.left) / r.width
+                  const y = (e.clientY - r.top) / r.height
+                  el.style.setProperty('--mx', x.toFixed(3))
+                  el.style.setProperty('--my', y.toFixed(3))
+                  el.style.setProperty('--x', `${(x * 100).toFixed(1)}%`)
+                  el.style.setProperty('--y', `${(y * 100).toFixed(1)}%`)
+                  el.style.setProperty('--shine-x', `${(x * 100).toFixed(1)}%`)
+                  el.style.setProperty('--shine-y', `${(y * 100).toFixed(1)}%`)
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget
+                  el.style.removeProperty('--mx')
+                  el.style.removeProperty('--my')
+                  el.style.removeProperty('--x')
+                  el.style.removeProperty('--y')
+                  el.style.removeProperty('--shine-x')
+                  el.style.removeProperty('--shine-y')
+                }}
+              >
+                <span className="chip-shine" aria-hidden="true" />
                 <SocialIcon type={s.type} />
                 <span>{s.label}</span>
               </a>
@@ -129,10 +158,32 @@ export default function App() {
             {config.links.map((link, index) => (
               <div
                 key={link.id}
-                className={`group rounded-2xl ring-1 ring-black/10 dark:ring-white/10 bg-white/85 dark:bg-white/5 backdrop-blur shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'} card-anim card-pulse`}
-                style={{ transitionDelay: `${180 + index * 60}ms`, animationDelay: `${(index % 5) * 200}ms` }}
+                className={`group rounded-2xl liquid-card liquid-tilt overflow-hidden transition-all duration-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'} liquid-breathe`}
+                style={{ transitionDelay: `${180 + index * 60}ms` }}
+                onMouseMove={(e) => {
+                  const el = e.currentTarget
+                  const r = el.getBoundingClientRect()
+                  const x = (e.clientX - r.left) / r.width
+                  const y = (e.clientY - r.top) / r.height
+                  el.style.setProperty('--mx', x.toFixed(3))
+                  el.style.setProperty('--my', y.toFixed(3))
+                  el.style.setProperty('--x', `${(x * 100).toFixed(1)}%`)
+                  el.style.setProperty('--y', `${(y * 100).toFixed(1)}%`)
+                  el.style.setProperty('--shine-x', `${(x * 100).toFixed(1)}%`)
+                  el.style.setProperty('--shine-y', `${(y * 100).toFixed(1)}%`)
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget
+                  el.style.removeProperty('--mx')
+                  el.style.removeProperty('--my')
+                  el.style.removeProperty('--x')
+                  el.style.removeProperty('--y')
+                  el.style.removeProperty('--shine-x')
+                  el.style.removeProperty('--shine-y')
+                }}
               >
-                <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 p-4 transition-transform group-hover:-translate-y-0.5">
+                <span className="liquid-shine" aria-hidden="true" />
+                <a href={link.url} target="_blank" rel="noopener noreferrer" className="liquid-content glass-text flex items-center justify-between gap-3 p-4 transition-transform group-hover:-translate-y-0.5">
                   <div className="flex items-center gap-3">
                     <span className="text-xl" aria-hidden="true">{link.emoji || '🔗'}</span>
                     <div>
@@ -142,19 +193,16 @@ export default function App() {
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-600 text-white">{link.badge}</span>
                         ) : null}
                       </div>
-                      <div className="text-xs text-black/60 dark:text-white/60">{safeHostname(link.url)}</div>
+                      <div className="text-xs text-white/80">{safeHostname(link.url)}</div>
                     </div>
                   </div>
-                  <LinkIcon className="w-4 h-4 text-black/60 dark:text-white/60" aria-hidden="true" />
+                  <LinkIcon className="w-4 h-4 text-white/80" aria-hidden="true" />
                 </a>
               </div>
             ))}
           </section>
 
-          {/* Footer */}
-          <footer className="text-center text-xs text-black/60 dark:text-white/60 mt-10">
-            © {new Date().getFullYear()} {config.profile.name}
-          </footer>
+          {/* Footer removed as requested */}
         </main>
       </div>
     </div>

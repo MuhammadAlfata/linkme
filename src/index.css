@@ -32,26 +32,135 @@
   .label {
     @apply block text-xs font-medium text-black/70 dark:text-white/70 mb-1;
   }
+
+  /* Social chips with liquid-glass style */
+  .glass-chip {
+    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-all select-none relative overflow-hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.18);
+  }
+  .glass-chip:hover { transform: translateY(-1px); }
 }
 
-/* Lightweight animations for link cards */
-/* Pulse-only animation (no float) */
-@keyframes pulseCard {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.01); opacity: 0.98; }
+/* Liquid glass cards (iOS-like) */
+/* Register animatable custom properties for gradient positions and angle */
+@property --x { syntax: '<percentage>'; inherits: false; initial-value: 25%; }
+@property --y { syntax: '<percentage>'; inherits: false; initial-value: 35%; }
+/* Auto-drift defaults for sheen when no cursor */
+@property --sx { syntax: '<percentage>'; inherits: false; initial-value: 22%; }
+@property --sy { syntax: '<percentage>'; inherits: false; initial-value: 28%; }
+@property --a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
+@keyframes liquidShift {
+  0%   { --x: 20%; --y: 30%; }
+  50%  { --x: 80%; --y: 70%; }
+  100% { --x: 20%; --y: 30%; }
 }
+
+@keyframes borderSweep { to { --a: 360deg; } }
+
+@keyframes hoverLift { 
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1.2px) scale(1.008); }
+}
+
+/* Interactive tilt using CSS variables set from JS */
+.liquid-tilt { 
+  --mx: .5; /* mouse X [0..1] */
+  --my: .5; /* mouse Y [0..1] */
+  transform: perspective(900px) rotateX(calc((.5 - var(--my)) * 6deg)) rotateY(calc((var(--mx) - .5) * 8deg));
+  transition: transform .12s ease; will-change: transform;
+}
+  .liquid-tilt:hover { transition-duration: .06s; }
 
 @layer utilities {
-  .card-anim { position: relative; }
-  .card-anim::after {
-    content: "";
-    position: absolute;
-    inset: 0;
+  .liquid-card { 
+    position: relative; 
+    overflow: hidden; 
     border-radius: 1rem; /* ~ rounded-2xl */
-    pointer-events: none;
-    /* Static glass accent ring (no shimmer) */
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
-    opacity: 1;
+    /* More transparent, closer to iOS frosted material */
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+    backdrop-filter: blur(26px) saturate(170%);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    border: 1px solid rgba(255,255,255,0.28);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.40), inset 0 -1px 0 rgba(0,0,0,0.18), 0 12px 34px rgba(0,0,0,0.18);
+    transform-style: preserve-3d;
   }
-  .card-pulse { animation: pulseCard 3.6s ease-in-out infinite; transform-origin: center; will-change: transform, opacity; }
+  /* Shimmering border ring (masked to border only) */
+  .liquid-card::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: conic-gradient(from var(--a), rgba(255,255,255,0.05), rgba(255,255,255,0.85), rgba(255,255,255,0.08) 35%, transparent 60%);
+    padding: 1px; /* ring thickness */
+    -webkit-mask: 
+      linear-gradient(#000 0 0) content-box, 
+      linear-gradient(#000 0 0);
+            mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; /* Safari */
+            mask-composite: exclude; /* others */
+    animation: borderSweep 28s linear infinite;
+    animation-play-state: paused;
+    opacity: .85;
+  }
+  .liquid-card:hover::before { animation-play-state: running; }
+  /* Liquid highlight blobs inside the card */
+  .liquid-card::after {
+    content: ""; position: absolute; inset: -20%; border-radius: inherit; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(36% 36% at var(--x) var(--y), rgba(255,255,255,0.26), transparent 60%),
+      radial-gradient(42% 42% at calc(100% - var(--x)) calc(100% - var(--y)), rgba(56,189,248,0.08), transparent 68%),
+      radial-gradient(46% 46% at calc(var(--x) + 10%) calc(var(--y) + 5%), rgba(16,185,129,0.06), transparent 68%);
+    filter: blur(20px) saturate(140%);
+    transform: translateZ(0);
+    animation: liquidShift 9s ease-in-out infinite;
+    mix-blend-mode: soft-light;
+    opacity: .85;
+  }
+  /* Moving diagonal shine on hover */
+  /* Specular highlight that follows cursor (no infinite sweep) */
+  @keyframes shineDrift {
+    0%   { --sx: 18%; --sy: 26%; }
+    35%  { --sx: 72%; --sy: 34%; }
+    70%  { --sx: 60%; --sy: 76%; }
+    100% { --sx: 18%; --sy: 26%; }
+  }
+  .liquid-shine {
+    position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
+    background:
+      radial-gradient(140px 140px at var(--shine-x, var(--sx)) var(--shine-y, var(--sy)), rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
+      linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06) 45%, transparent 60%);
+    mix-blend-mode: screen; filter: blur(1.2px);
+    opacity: .38; transition: opacity .25s ease;
+    animation: shineDrift 18s ease-in-out infinite;
+  }
+  .liquid-card:hover .liquid-shine { opacity: .55; animation-duration: 10s; }
+  /* Content sits above effects */
+  .liquid-content { position: relative; z-index: 2; }
+
+  /* Gentle breathing motion (a bit faster for visibility) */
+  .liquid-breathe { animation: hoverLift 3.2s ease-in-out infinite; will-change: transform; }
+  .liquid-card:hover { transform: translateY(-2px); transition: transform .2s ease; }
+
+  /* Text readability on glass */
+  .glass-text { text-shadow: 0 1px 1.2px rgba(0,0,0,0.35); }
+
+  /* Chip tilt + shine using same variables */
+  .chip-tilt { 
+    --mx: .5; --my: .5;
+    transform: perspective(700px) rotateX(calc((.5 - var(--my)) * 4deg)) rotateY(calc((var(--mx) - .5) * 6deg));
+    transition: transform .12s ease; will-change: transform;
+  }
+  .chip-shine {
+    position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1;
+    background:
+      radial-gradient(90px 90px at var(--shine-x, var(--sx)) var(--shine-y, var(--sy)), rgba(255,255,255,0.65), rgba(255,255,255,0) 60%),
+      linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06) 45%, transparent 60%);
+    mix-blend-mode: screen; filter: blur(1px);
+    opacity: .38; transition: opacity .25s ease; animation: shineDrift 14s ease-in-out infinite;
+  }
+  .glass-chip:hover .chip-shine { opacity: .55; animation-duration: 8s; }
 }
