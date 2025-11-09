@@ -18,7 +18,7 @@ const THEME_KEY = 'linkinbio_theme'
     },
   links: [
     { id: '1', title: 'Random IELTS Speaking Question Generator', url: 'https://speakinggenerator.vercel.app/', emoji: '🎤', badge: 'Free' },
-    { id: '2', title: 'IELTS Mastery Hub (Coming Soon)', url: 'https://waitlist.example', emoji: '🚀', badge: 'Beta' },
+    { id: '2', title: 'IELTS Mastery Hub (Coming Soon)', url: 'https://ielts-platform.onrender.com/', emoji: '🚀', badge: 'Beta' },
   ],
 }
 
