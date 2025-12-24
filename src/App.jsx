@@ -20,6 +20,7 @@ const THEME_KEY = 'linkinbio_theme'
     { id: '1', title: 'Random IELTS Speaking Question Generator', url: 'https://speakinggenerator.vercel.app/', emoji: '🎤', badge: 'Free' },
     { id: '2', title: 'IELTS Mastery Hub (Coming Soon)', url: 'https://ielts-platform-flame.vercel.app/', emoji: '🚀', badge: 'Beta' },
     { id: '3', title: 'Tools belajar pecahan istimewa', url: 'https://muhammadalfata.github.io/pecahan-istimewa/', emoji: '➗' },
+    { id: '4', title: 'LevelUp- tools daily tracker', url: 'https://level-up-eosin-eight.vercel.app//', emoji: '🏆' },
   ],
 }
 
